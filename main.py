@@ -1,15 +1,36 @@
 '''
 - Empty GUI (Functionality will be added later)
-- WARNING: USE CTkImage() instead of ImageTk.PhotoImage()
+- WARNING: USE CTkImage() INSTEAD OF ImageTk.PhotoImage()
+        Using CTkImage() instead of ImageTk.PhotoImage() is not always working
+- WARNING: USE Image.Resampling.LANCZOS INSTEAD OF Image.ANTIALIAS
 '''
 from tkinter import *
 from customtkinter import *
-from PIL import Image
+from customtkinter import filedialog
+from PIL import Image, ImageOps, ImageTk
 
 def open_file():
     # Opens image and resizes it to fit the window
+    global img, img_preview, previewIMG_frame
+
+    image_path = filedialog.askopenfilename(initialdir="./", title="Open your image",
+                filetypes=(("png", "*.png"), ("jpg", "*.jpg"), ("All types", "*.*")))
     
-    pass
+    # Get the current tkinter window width and height
+    window_width = root.winfo_width()
+    window_height = root.winfo_height()
+    width_inputIMG = int((window_width/2)-46)
+
+    img = Image.open(image_path)
+    img_preview = ImageOps.contain(img,(width_inputIMG,window_height))
+    show_img_preview = ImageTk.PhotoImage(img_preview)
+
+    # Removing any existing widgets inside the frame
+    for widget in previewIMG_frame.winfo_children():
+        widget.destroy()
+
+    label_img_preview = CTkLabel(previewIMG_frame, image=show_img_preview, text="")
+    label_img_preview.grid(row=0,column=0)
 
 def undo_change():
     # Reverts back to previous change
@@ -78,10 +99,11 @@ history_tracker=[] # [["<Previous image name>", "<Change happened to it>"], [...
 ### ----GUI---- ###
 
 ## ---Initializing root--- ##
-root = CTk()
+root = CTk()    
 root.title("Image Handler") # !+! Add icon too
 set_appearance_mode("Dark")
 set_default_color_theme("blue")
+
 # Menu Bar
 menu_bar = Menu(root)
 menu_bar.add_command(label="Open Image", command=open_file)
@@ -148,4 +170,5 @@ button_save.grid(row=0,column=1)
 
 outputIMG_frame.grid(row=0,column=1,sticky=N+S,padx=2,pady=2)
 
+root.state("zoomed")
 root.mainloop()
