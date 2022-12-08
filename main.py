@@ -53,11 +53,26 @@ def track_history(image_name, change_made):
 
     pass
 
-def rotate_image(img, img_preview, direction):
+def rotate_image(direction):
+    global img, img_preview, previewIMG_frame
     # Rotates both <img> and <img_preview> by 90 degrees in direction = clockwise/anticlockwise
     # Also updates the <img_preview> in GUI
+    
+    if(direction.upper() == "ANTICLOCKWISE"):
+        img = img.rotate(90, expand=True)
+        img_preview = img_preview.rotate(90, expand=True)
+    elif(direction.upper() == "CLOCKWISE"):
+        img = img.rotate(-90, expand=True)
+        img_preview = img_preview.rotate(-90, expand=True)
 
-    pass
+    show_img_preview = ImageTk.PhotoImage(img_preview)
+
+    # Removing any existing widgets inside the frame
+    for widget in previewIMG_frame.winfo_children():
+        widget.destroy()
+
+    label_img_preview = CTkLabel(previewIMG_frame, image=show_img_preview, text="")
+    label_img_preview.grid(row=0,column=0)   
 
 def flip_image(img, img_preview, orientation):
     # Flips both <img> and <img_preview> in given orientation = vertical/horizontal
@@ -191,8 +206,8 @@ icon_grayscale = CTkImage(Image.open("./Icons/black-and-white.png").resize((60,6
 icon_crop = CTkImage(Image.open("./Icons/crop.png").resize((60,60),Image.Resampling.LANCZOS))
 icon_add_text = CTkImage(Image.open("./Icons/add-text.png").resize((60,60),Image.Resampling.LANCZOS))
 
-button_rotate_anticlockwise = CTkButton(button_frame, text="", image=icon_rotate_anticlockwise, command = lambda: rotate_image("<X>","<X>","ANTICLOCKWISE"), width=40,height=80)
-button_rotate_clockwise = CTkButton(button_frame, text="", image=icon_rotate_clockwise, command = lambda: rotate_image("<X>","<X>","CLOCKWISE"), width=40,height=80)
+button_rotate_anticlockwise = CTkButton(button_frame, text="", image=icon_rotate_anticlockwise, command = lambda: rotate_image("ANTICLOCKWISE"), width=40,height=80)
+button_rotate_clockwise = CTkButton(button_frame, text="", image=icon_rotate_clockwise, command = lambda: rotate_image("CLOCKWISE"), width=40,height=80)
 button_flip_vertical = CTkButton(button_frame, text="", image=icon_flip_vertical, command = lambda: flip_image("<X>","<X>","VERTICAL"), width=40,height=80)
 button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizontal, command = lambda: flip_image("<X>","<X>","HORIZONTAL"), width=40,height=80)
 button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = lambda: black_and_white("<X>","<X>"), width=80, height=80)
