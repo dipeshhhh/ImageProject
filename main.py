@@ -125,7 +125,15 @@ def image_crop(img, img_preview):
 def save_as(img_output):
     # Saves the given image
 
-    pass
+    image_extentions = (
+        ("PNG","*.png"),
+        ("JPG","*.jpg"),
+        ("JPEG","*.jpeg"),
+        ("All Files","*.*"))
+    
+    file_path = filedialog.asksaveasfilename(filetypes=image_extentions, defaultextension=image_extentions)
+    
+    img_output.save(file_path)
 
 def output_image(sheet_size):
     # Takes in sheet size and outputs final image required
@@ -137,9 +145,9 @@ def output_image(sheet_size):
             widget.destroy()
         return
     if(sheet_size == "A4"):
-        result_image = Image.new("RGBA",(2520,3564),color="white")
+        result_image = Image.new("RGB",(2520,3564),color="white")
     elif(sheet_size == "A3"):
-        result_image = Image.new("RGBA",(3564,5040),color="white")
+        result_image = Image.new("RGB",(3564,5040),color="white")
     else:
         return
 
@@ -268,7 +276,7 @@ drop_menu = CTkOptionMenu(result_button_frame, variable=selected_size, values=sh
                             command=lambda X: output_image(selected_size.get()))
 drop_menu.set(sheet_sizes[0])
 drop_menu.grid(row=0,column=0)
-button_save = CTkButton(result_button_frame, text="Save As", command= lambda: save_as("<outIMG>"), width=100)
+button_save = CTkButton(result_button_frame, text="Save As", command= lambda: save_as(result_image), width=100)
 button_save.grid(row=0,column=1)
 result_button_frame.grid(row=0,column=0)
 
