@@ -8,7 +8,7 @@
 from tkinter import *
 from customtkinter import *
 from customtkinter import filedialog
-from PIL import Image, ImageOps, ImageTk
+from PIL import Image, ImageOps, ImageTk, ImageEnhance
 
 
 def re_frame(image_name, frame_name):
@@ -60,9 +60,9 @@ def track_history(image_name, change_made):
     pass
 
 def rotate_image(direction):
-    global img, img_preview, previewIMG_frame
     # Rotates both <img> and <img_preview> by 90 degrees in direction = clockwise/anticlockwise
     # Also updates the <img_preview> in GUI
+    global img, img_preview, previewIMG_frame
 
     if(direction.upper() == "ANTICLOCKWISE"):
         img = img.rotate(90, expand=True)
@@ -90,10 +90,27 @@ def flip_image(orientation):
 
     re_frame(show_image_preview, previewIMG_frame)
 
-def black_and_white(img, img_preview, level):
-    # Turns image to black and white by given level
+def black_and_white():
+    # Toggles greyscale in the image
+    global img, img_preview, isGrayscale, grayscale_backup, grayscale_preview_backup
+    
+    if(isGrayscale):
+        img = grayscale_backup
+        img_preview = grayscale_preview_backup
 
-    pass
+        isGrayscale = False
+    
+    elif(not(isGrayscale)):
+        grayscale_backup = img
+        grayscale_preview_backup = img_preview
+
+        img = ImageEnhance.Color(img).enhance(0)
+        img_preview = ImageEnhance.Color(img_preview).enhance(0)
+
+        isGrayscale = True
+    
+    show_image_preview = ImageTk.PhotoImage(img_preview)
+    re_frame(show_image_preview, previewIMG_frame)
 
 def add_text(img, img_preview):
     # Adds text with white background to bottom of the image
@@ -174,6 +191,10 @@ img_preview=""
 result_image=""
 result_image_preview=""
 
+isGrayscale = False
+grayscale_backup = ""
+grayscale_preview_backup = ""
+
 # 2D list to track changes made throughout the execution
 history_tracker=[] # [["<Previous image name>", "<Change happened to it>"], [...], ...]
 
@@ -215,7 +236,7 @@ button_rotate_anticlockwise = CTkButton(button_frame, text="", image=icon_rotate
 button_rotate_clockwise = CTkButton(button_frame, text="", image=icon_rotate_clockwise, command = lambda: rotate_image("CLOCKWISE"), width=40,height=80)
 button_flip_vertical = CTkButton(button_frame, text="", image=icon_flip_vertical, command = lambda: flip_image("VERTICAL"), width=40,height=80)
 button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizontal, command = lambda: flip_image("HORIZONTAL"), width=40,height=80)
-button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = lambda: black_and_white("<X>","<X>"), width=80, height=80)
+button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = black_and_white, width=80, height=80)
 button_crop = CTkButton(button_frame, text="", image=icon_crop, command = lambda: image_crop("<X>","<X>"), width=80, height=80)
 button_add_text = CTkButton(button_frame, text="", image=icon_add_text, command = lambda: add_text("<X>","<X>"), width=80, height=80)
 
