@@ -15,7 +15,7 @@ def open_file():
     global img, img_preview, previewIMG_frame
 
     image_path = filedialog.askopenfilename(initialdir="./", title="Open your image",
-                filetypes=(("png", "*.png"), ("jpg", "*.jpg"), ("All types", "*.*")))
+                filetypes=(("All types", "*.*"), ("png", "*.png"), ("jpg", "*.jpg")))
     
     # Get the current tkinter window width and height
     window_width = root.winfo_width()
@@ -95,8 +95,11 @@ def output_image(sheet_size):
         return
     if(sheet_size == "A4"):
         result_image = Image.new("RGBA",(2520,3564),color="white")
+    elif(sheet_size == "A3"):
+        result_image = Image.new("RGBA",(3564,5040),color="white")
     else:
         return
+    # A3 Width= 3564, height = 5040
     
     resultIMG_width, resultIMG_height = result_image.size
     
