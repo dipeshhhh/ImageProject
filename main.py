@@ -10,6 +10,17 @@ from customtkinter import *
 from customtkinter import filedialog
 from PIL import Image, ImageOps, ImageTk
 
+
+def re_frame(image_name, frame_name):
+    # Empties frame then adds PhotoImage to grid(row=0,column=0)
+    # image_name: ImageTk.PhotoImage(), frame_name: CTkFrame()
+
+    for widget in frame_name.winfo_children():
+        widget.destroy()
+
+    label_img_preview = CTkLabel(frame_name, image=image_name, text="")
+    label_img_preview.grid(row=0,column=0)  
+
 def open_file():
     # Opens image and resizes it to fit the window
     global img, img_preview, previewIMG_frame
@@ -26,12 +37,7 @@ def open_file():
     img_preview = ImageOps.contain(img,(width_inputIMG,window_height))
     show_img_preview = ImageTk.PhotoImage(img_preview)
 
-    # Removing any existing widgets inside the frame
-    for widget in previewIMG_frame.winfo_children():
-        widget.destroy()
-
-    label_img_preview = CTkLabel(previewIMG_frame, image=show_img_preview, text="")
-    label_img_preview.grid(row=0,column=0)
+    re_frame(show_img_preview, previewIMG_frame)
 
 def undo_change():
     # Reverts back to previous change
@@ -67,17 +73,22 @@ def rotate_image(direction):
 
     show_img_preview = ImageTk.PhotoImage(img_preview)
 
-    # Removing any existing widgets inside the frame
-    for widget in previewIMG_frame.winfo_children():
-        widget.destroy()
+    re_frame(show_img_preview, previewIMG_frame) 
 
-    label_img_preview = CTkLabel(previewIMG_frame, image=show_img_preview, text="")
-    label_img_preview.grid(row=0,column=0)   
-
-def flip_image(img, img_preview, orientation):
+def flip_image(orientation):
     # Flips both <img> and <img_preview> in given orientation = vertical/horizontal
+    global img, img_preview
 
-    pass
+    if(orientation.upper() == "VERTICAL"):
+        img = img.transpose(Image.TRANSPOSE.FLIP_TOP_BOTTOM)
+        img_preview = img_preview.transpose(Image.TRANSPOSE.FLIP_TOP_BOTTOM)
+    elif(orientation.upper() == "HORIZONTAL"):
+        img = img.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
+        img_preview = img_preview.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
+
+    show_image_preview = ImageTk.PhotoImage(img_preview)
+
+    re_frame(show_image_preview, previewIMG_frame)
 
 def black_and_white(img, img_preview, level):
     # Turns image to black and white by given level
@@ -114,8 +125,7 @@ def output_image(sheet_size):
         result_image = Image.new("RGBA",(3564,5040),color="white")
     else:
         return
-    # A3 Width= 3564, height = 5040
-    
+
     resultIMG_width, resultIMG_height = result_image.size
     
     img_width, img_height = img.size    
@@ -152,14 +162,9 @@ def output_image(sheet_size):
     height_result_image = int(window_height-29)    
     
     result_image_preview = ImageOps.contain(result_image,(width_result_image,height_result_image))
-
-    # Removing any existing widgets inside the frame
-    for widget in outputIMG_frame.winfo_children():
-        widget.destroy()
-
     show_result_image_preview = ImageTk.PhotoImage(result_image_preview)
-    label_result_image = CTkLabel(outputIMG_frame, image = show_result_image_preview, text="")
-    label_result_image.grid(row=0,column=0)
+
+    re_frame(show_result_image_preview, outputIMG_frame)
 
 ### ----Initializing Variables---- ###
 
@@ -208,8 +213,8 @@ icon_add_text = CTkImage(Image.open("./Icons/add-text.png").resize((60,60),Image
 
 button_rotate_anticlockwise = CTkButton(button_frame, text="", image=icon_rotate_anticlockwise, command = lambda: rotate_image("ANTICLOCKWISE"), width=40,height=80)
 button_rotate_clockwise = CTkButton(button_frame, text="", image=icon_rotate_clockwise, command = lambda: rotate_image("CLOCKWISE"), width=40,height=80)
-button_flip_vertical = CTkButton(button_frame, text="", image=icon_flip_vertical, command = lambda: flip_image("<X>","<X>","VERTICAL"), width=40,height=80)
-button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizontal, command = lambda: flip_image("<X>","<X>","HORIZONTAL"), width=40,height=80)
+button_flip_vertical = CTkButton(button_frame, text="", image=icon_flip_vertical, command = lambda: flip_image("VERTICAL"), width=40,height=80)
+button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizontal, command = lambda: flip_image("HORIZONTAL"), width=40,height=80)
 button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = lambda: black_and_white("<X>","<X>"), width=80, height=80)
 button_crop = CTkButton(button_frame, text="", image=icon_crop, command = lambda: image_crop("<X>","<X>"), width=80, height=80)
 button_add_text = CTkButton(button_frame, text="", image=icon_add_text, command = lambda: add_text("<X>","<X>"), width=80, height=80)
