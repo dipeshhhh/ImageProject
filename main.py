@@ -57,7 +57,7 @@ def rotate_image(direction):
     global img, img_preview, previewIMG_frame
     # Rotates both <img> and <img_preview> by 90 degrees in direction = clockwise/anticlockwise
     # Also updates the <img_preview> in GUI
-    
+
     if(direction.upper() == "ANTICLOCKWISE"):
         img = img.rotate(90, expand=True)
         img_preview = img_preview.rotate(90, expand=True)
