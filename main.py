@@ -119,10 +119,65 @@ def black_and_white():
     # show_image_preview = ImageTk.PhotoImage(img_preview)
     re_frame(img_preview, previewIMG_frame)
 
-def add_text(img, img_preview):
-    # Adds text with white background to bottom of the image
+#----------------- Removed this feature due to time constraints :( -----------------
+# def add_text():
+#     # Adds text with white background to bottom of the image
 
-    pass
+#     window_add_text = CTkToplevel()
+#     window_add_text.title("Add Text")
+#     global img, img_preview, text_image
+#     img_preview_width, img_preview_height = img_preview.size
+#     text_image = img_preview.copy()
+
+#     def bg_image(posX):
+#         bg_height = int(posX)
+#         bg_width = img_preview_width
+
+#         # shown_image = img_preview.copy()
+#         background_image = Image.new("RGB",(bg_width, bg_height), color="white")
+#         text_image.paste(background_image,(img_preview_height-bg_height,0))
+#         show_text_image = ImageTk.PhotoImage(text_image)
+#         # Update label
+#         label_text_image.configure(image=show_text_image)
+        
+#     control_frame = CTkFrame(window_add_text)
+    
+#     background_size = CTkSlider(control_frame, from_=0, to=img_preview_height, orientation=HORIZONTAL, 
+#                                 command= lambda X: bg_image(background_size.get()))
+#     background_size.set(0)
+#     background_size.grid(row=0,column=0,columnspan=5)
+
+#     input_text = StringVar()
+#     enter_text = CTkEntry(master=control_frame, placeholder_text="Sample Text")
+#     input_text = enter_text.get()
+#     enter_text.grid(row=1,column=0,columnspan=5)
+
+#     text_sizes = ("8","9","10","11","12","14","18","24","30","36","48","60","72","96")
+#     textSize=8
+#     input_textSize = IntVar()
+#     input_textSize.set(8)
+#     cbox_text_size = CTkComboBox(master=control_frame, values=text_sizes, variable=input_textSize)
+#     button_apply_text = CTkButton(control_frame, text="Apply",width=40)
+
+#     cbox_text_size.grid(row=2,column=0)
+#     button_apply_text.grid(row=2,column=1,padx=2)
+
+#     button_bold = CTkButton(control_frame, text="B",width=28)
+#     button_italic = CTkButton(control_frame, text="I",width=28)
+#     button_underline = CTkButton(control_frame, text="U",width=28)
+
+#     button_bold.grid(row=2, column=2, padx=2)
+#     button_italic.grid(row=2, column=3, padx=2)
+#     button_underline.grid(row=2, column=4, padx=2)    
+
+#     control_frame.grid(row=0,column=1)
+
+#     image_frame = CTkFrame(window_add_text)
+#     show_text_image = ImageTk.PhotoImage(text_image)
+#     label_text_image= CTkLabel(image_frame, image = show_text_image, text="")
+#     label_text_image.grid(row=0,column=0)
+#     image_frame.grid(row=0,column=0)
+# -------------------------------------------------------------------------------------------------------------
 
 def image_crop():
     # Crops image
@@ -313,6 +368,9 @@ grayscale_preview_backup = ""
 cropped_image = ""
 Left = Top = Right = Bottom = 0
 
+# Below was for add_text()
+# text_image=""
+
 # 2D list to track changes made throughout the execution
 history_tracker=[] # [["<Previous image name>", "<Change happened to it>"], [...], ...]
 
@@ -348,7 +406,7 @@ icon_flip_vertical = CTkImage(Image.open("./Icons/vertical-flip.png").resize((30
 icon_flip_horizontal = CTkImage(Image.open("./Icons/horizontal-flip.png").resize((30,30),Image.Resampling.LANCZOS))
 icon_grayscale = CTkImage(Image.open("./Icons/black-and-white.png").resize((60,60),Image.Resampling.LANCZOS))
 icon_crop = CTkImage(Image.open("./Icons/crop.png").resize((60,60),Image.Resampling.LANCZOS))
-icon_add_text = CTkImage(Image.open("./Icons/add-text.png").resize((60,60),Image.Resampling.LANCZOS))
+# icon_add_text = CTkImage(Image.open("./Icons/add-text.png").resize((60,60),Image.Resampling.LANCZOS))
 
 button_rotate_anticlockwise = CTkButton(button_frame, text="", image=icon_rotate_anticlockwise, command = lambda: rotate_image("ANTICLOCKWISE"), width=40,height=80)
 button_rotate_clockwise = CTkButton(button_frame, text="", image=icon_rotate_clockwise, command = lambda: rotate_image("CLOCKWISE"), width=40,height=80)
@@ -356,7 +414,7 @@ button_flip_vertical = CTkButton(button_frame, text="", image=icon_flip_vertical
 button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizontal, command = lambda: flip_image("HORIZONTAL"), width=40,height=80)
 button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = black_and_white, width=80, height=80)
 button_crop = CTkButton(button_frame, text="", image=icon_crop, command = image_crop, width=80, height=80)
-button_add_text = CTkButton(button_frame, text="", image=icon_add_text, command = lambda: add_text("<X>","<X>"), width=80, height=80)
+# button_add_text = CTkButton(button_frame, text="", image=icon_add_text, command = add_text, width=80, height=80)
 
 button_rotate_anticlockwise.grid(row=0,column=0,padx=2,pady=2)
 button_rotate_clockwise.grid(row=0,column=1,padx=2,pady=2)
@@ -364,15 +422,12 @@ button_flip_vertical.grid(row=1,column=0,padx=2,pady=2)
 button_flip_horizontal.grid(row=1,column=1,padx=2,pady=2)
 button_grayscale.grid(row=2,column=0, columnspan=2,padx=2,pady=2)
 button_crop.grid(row=3,column=0, columnspan=2,padx=2,pady=2)
-button_add_text.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
+# button_add_text.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
 
 button_frame.grid(row=0,column=0, sticky=N+S)
 
 # --Image Frame-- 
 previewIMG_frame = CTkFrame(inputIMG_frame)
-# img = Image.open(<image path from open_image() function>)
-# img_preview = img.resize(<>)
-# img_show = ImageTk.PhotoImage(imgPIL)
 previewIMG_frame.grid(row=0,column=1, sticky=N+S,padx=2,pady=2)
 inputIMG_frame.grid(row=0,column=0)
 
