@@ -224,25 +224,33 @@ def output_image(sheet_size):
     # 300 DPI 2.5cm x 3.5cm sized passport image on an A4 sheet (21cm x 29.7cm)
     global img, result_image, result_image_preview
 
-    if(sheet_size == "SelectSize"): # On selecting default option
-        for widget in outputIMG_frame.winfo_children():
-            widget.destroy()
-        return
-    if(sheet_size == "A4"):
-        result_image = Image.new("RGB",(2520,3564),color="white")
-    elif(sheet_size == "A3"):
-        result_image = Image.new("RGB",(3564,5040),color="white")
-    else:
-        return
+    img_bk = img.copy()
 
-    resultIMG_width, resultIMG_height = result_image.size
-    
     img_width, img_height = img.size    
     if(img_width > img_height): # Landscape orientation
         img = ImageOps.fit(image=img, size = (420,300))
     else: # Portrait orientation
         img = ImageOps.fit(image=img, size = (300,420))              
     img_width, img_height = img.size
+
+    if(sheet_size == "SelectSize"): # On selecting default option
+        for widget in outputIMG_frame.winfo_children():
+            widget.destroy()
+        return
+    if(sheet_size == "A4"):
+        result_image = Image.new("RGB",(2520,3564),color="white")
+    elif(sheet_size == "A4 (Border)"):
+        result_image = Image.new("RGB",(2520,3564),color="white")        
+        img = ImageOps.expand(img,border=6,fill="black")
+    elif(sheet_size == "A3"):
+        result_image = Image.new("RGB",(3564,5040),color="white")
+    elif(sheet_size == "A3 (Border)"):
+        result_image = Image.new("RGB",(3564,5040),color="white")
+        img = ImageOps.expand(img,border=6,fill="black")
+    else:
+        return
+
+    resultIMG_width, resultIMG_height = result_image.size    
     
     # Counters to check how much images can be added to the sheet
     counter_columns = 0
@@ -273,6 +281,7 @@ def output_image(sheet_size):
     result_image_preview = ImageOps.contain(result_image,(width_result_image,height_result_image))
 
     re_frame(result_image_preview, outputIMG_frame)
+    img = img_bk
 
 def image_reset():
     global img, img_preview, backup_img, backup_img_preview
@@ -363,14 +372,16 @@ result_frame = CTkFrame(root)
 
 # Buttons on the right side
 result_button_frame = CTkFrame(result_frame)
-sheet_sizes = ["SelectSize","A4", "A3"]
+sheet_sizes = ["SelectSize", "A4","A4 (Border)", "A3", "A3 (Border)"]
 selected_size = StringVar()
 drop_menu = CTkOptionMenu(result_button_frame, variable=selected_size, values=sheet_sizes, width=100, 
                             command=lambda X: output_image(selected_size.get()))
 drop_menu.set(sheet_sizes[0])
-drop_menu.grid(row=0,column=0)
 button_save = CTkButton(result_button_frame, text="Save As", command= lambda: save_as(result_image), width=100)
-button_save.grid(row=0,column=1)
+
+drop_menu.grid(row=0,column=0)
+button_save.grid(row=0,column=2)
+
 result_button_frame.grid(row=0,column=0)
 
 # Image on the right side
