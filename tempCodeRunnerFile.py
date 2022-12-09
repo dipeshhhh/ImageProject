@@ -1,2 +1,1 @@
-
-    print(resetFlag)
+width=window_width

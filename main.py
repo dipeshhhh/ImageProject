@@ -284,7 +284,6 @@ def image_reset():
         img_preview = backup_img_preview
 
         re_frame(img_preview,previewIMG_frame)
-        resetFlag = False
     else:
         return    
 
@@ -313,6 +312,9 @@ root = CTk()
 root.title("Image Handler") # !+! Add icon too
 set_appearance_mode("Dark")
 set_default_color_theme("blue")
+
+window_width = root.winfo_width()
+window_height = root.winfo_height()
 
 # Menu Bar
 menu_bar = Menu(root)
@@ -348,14 +350,15 @@ button_grayscale.grid(row=2,column=0, columnspan=2,padx=2,pady=2)
 button_crop.grid(row=3,column=0, columnspan=2,padx=2,pady=2)
 button_reset.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
 
-button_frame.grid(row=0,column=0, sticky=N+S)
+button_frame.grid(row=0,column=0, sticky=N)
 
 # --Image Frame-- 
 previewIMG_frame = CTkFrame(inputIMG_frame)
 previewIMG_frame.grid(row=0,column=1, sticky=N+S,padx=2,pady=2)
-inputIMG_frame.grid(row=0,column=0)
 
-# ---Result Image Frame---
+inputIMG_frame.grid(row=0,column=0,sticky=N,)
+
+## ---Result Image Frame---
 result_frame = CTkFrame(root)
 
 # Buttons on the right side
