@@ -6,10 +6,10 @@
 - WARNING: USE Image.Resampling.LANCZOS INSTEAD OF Image.ANTIALIAS
 '''
 from tkinter import *
+from tkinter import messagebox
 from customtkinter import *
 from customtkinter import filedialog
 from PIL import Image, ImageOps, ImageTk, ImageEnhance
-import copy
 
 #ignore::CTkLabelWarning
 
@@ -26,7 +26,7 @@ def re_frame(image_name, frame_name):
 
 def open_file():
     # Opens image and resizes it to fit the window
-    global img, img_preview, previewIMG_frame
+    global img, img_preview, previewIMG_frame, backup_img, backup_img_preview
 
     image_extentions = (
         ("All Files","*.*"),
@@ -44,10 +44,11 @@ def open_file():
 
     img = Image.open(image_path)
     img_preview = ImageOps.contain(img,(width_inputIMG,window_height))
-    # show_img_preview = ImageTk.PhotoImage(img_preview)
+
+    backup_img = Image.open(image_path)
+    backup_img_preview = ImageOps.contain(img,(width_inputIMG,window_height))
 
     re_frame(img_preview, previewIMG_frame)
-    # track_history(img, img_preview, "Opened File")
 
 # RIP: History Tracking :(
 
@@ -282,9 +283,24 @@ def output_image(sheet_size):
 
     re_frame(result_image_preview, outputIMG_frame)
 
+def image_reset():
+    global img, img_preview, backup_img, backup_img_preview
+
+    confirm = messagebox.askyesno(title="WARNING", message="Are you sure you want to reset the image?")
+
+    if(confirm):
+        img = backup_img
+        img_preview = backup_img_preview
+
+        re_frame(img_preview,previewIMG_frame)
+        resetFlag = False
+    else:
+        return    
+
 ### ----Initializing Variables---- ###
 
-
+backup_img= ""
+backup_img_preview=""
 
 img=""
 img_preview=""
@@ -350,6 +366,7 @@ button_flip_vertical = CTkButton(button_frame, text="", image=icon_flip_vertical
 button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizontal, command = lambda: flip_image("HORIZONTAL"), width=40,height=80)
 button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = black_and_white, width=80, height=80)
 button_crop = CTkButton(button_frame, text="", image=icon_crop, command = image_crop, width=80, height=80)
+button_reset = CTkButton(button_frame, text="RESET", command = image_reset, width=80, height=80)
 # button_add_text = CTkButton(button_frame, text="", image=icon_add_text, command = add_text, width=80, height=80)
 
 button_rotate_anticlockwise.grid(row=0,column=0,padx=2,pady=2)
@@ -358,6 +375,7 @@ button_flip_vertical.grid(row=1,column=0,padx=2,pady=2)
 button_flip_horizontal.grid(row=1,column=1,padx=2,pady=2)
 button_grayscale.grid(row=2,column=0, columnspan=2,padx=2,pady=2)
 button_crop.grid(row=3,column=0, columnspan=2,padx=2,pady=2)
+button_reset.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
 # button_add_text.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
 
 button_frame.grid(row=0,column=0, sticky=N+S)
