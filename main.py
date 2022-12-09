@@ -1,5 +1,4 @@
 '''
-- Empty GUI (Functionality will be added later)
 - Working with 300 DPI
 - WARNING: USE CTkImage() INSTEAD OF ImageTk.PhotoImage()
         Using CTkImage() instead of ImageTk.PhotoImage() is not always working
@@ -10,8 +9,6 @@ from tkinter import messagebox
 from customtkinter import *
 from customtkinter import filedialog
 from PIL import Image, ImageOps, ImageTk, ImageEnhance
-
-#ignore::CTkLabelWarning
 
 def re_frame(image_name, frame_name):
     # Empties frame then adds PhotoImage to grid(row=0,column=0)
@@ -64,8 +61,6 @@ def rotate_image(direction):
         img = img.rotate(-90, expand=True)
         img_preview = img_preview.rotate(-90, expand=True)
 
-    # show_img_preview = ImageTk.PhotoImage(img_preview)
-
     re_frame(img_preview, previewIMG_frame) 
 
 def flip_image(orientation):
@@ -78,8 +73,6 @@ def flip_image(orientation):
     elif(orientation.upper() == "HORIZONTAL"):
         img = img.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
         img_preview = img_preview.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
-
-    # show_image_preview = ImageTk.PhotoImage(img_preview)
 
     re_frame(img_preview, previewIMG_frame)
 
@@ -102,7 +95,6 @@ def black_and_white():
 
         isGrayscale = True
     
-    # show_image_preview = ImageTk.PhotoImage(img_preview)
     re_frame(img_preview, previewIMG_frame)
 
 # RIP: add_text() :(
@@ -279,7 +271,6 @@ def output_image(sheet_size):
     height_result_image = int(window_height-29)    
     
     result_image_preview = ImageOps.contain(result_image,(width_result_image,height_result_image))
-    # show_result_image_preview = ImageTk.PhotoImage(result_image_preview)
 
     re_frame(result_image_preview, outputIMG_frame)
 
@@ -315,16 +306,6 @@ grayscale_preview_backup = ""
 cropped_image = ""
 Left = Top = Right = Bottom = 0
 
-# Below was for add_text()
-# text_image=""
-
-# Below was for history
-# history_list = []
-# counter_history = int(-1)
-
-# 2D list to track changes made throughout the execution
-history_tracker=[] # [["<Previous image name>", "<Change happened to it>"], [...], ...]
-
 ### ----GUI---- ###
 
 ## ---Initializing root--- ##
@@ -336,19 +317,11 @@ set_default_color_theme("blue")
 # Menu Bar
 menu_bar = Menu(root)
 menu_bar.add_command(label="Open Image", command=open_file)
-
-'''
-menu_bar.add_command(label="Undo", command = undo_change)
-menu_bar.add_command(label="Redo", command = redo_change)
-History Drop Down Menu
-history_menu = Menu(menu_bar)
-menu_bar.add_cascade(label="History", menu=history_menu)
-history_menu.add_command(label=<change_name>, command = lambda: change_history(<change_name>))
-'''
 root.config(menu=menu_bar)
 
 ## ---For the input image--- ##
 inputIMG_frame = CTkFrame(root)
+
 # --For Buttons--
 button_frame = CTkFrame(inputIMG_frame)
 
@@ -358,7 +331,6 @@ icon_flip_vertical = CTkImage(Image.open("./Icons/vertical-flip.png").resize((30
 icon_flip_horizontal = CTkImage(Image.open("./Icons/horizontal-flip.png").resize((30,30),Image.Resampling.LANCZOS))
 icon_grayscale = CTkImage(Image.open("./Icons/black-and-white.png").resize((60,60),Image.Resampling.LANCZOS))
 icon_crop = CTkImage(Image.open("./Icons/crop.png").resize((60,60),Image.Resampling.LANCZOS))
-# icon_add_text = CTkImage(Image.open("./Icons/add-text.png").resize((60,60),Image.Resampling.LANCZOS))
 
 button_rotate_anticlockwise = CTkButton(button_frame, text="", image=icon_rotate_anticlockwise, command = lambda: rotate_image("ANTICLOCKWISE"), width=40,height=80)
 button_rotate_clockwise = CTkButton(button_frame, text="", image=icon_rotate_clockwise, command = lambda: rotate_image("CLOCKWISE"), width=40,height=80)
@@ -367,7 +339,6 @@ button_flip_horizontal = CTkButton(button_frame, text="", image=icon_flip_horizo
 button_grayscale = CTkButton(button_frame, text="", image=icon_grayscale, command = black_and_white, width=80, height=80)
 button_crop = CTkButton(button_frame, text="", image=icon_crop, command = image_crop, width=80, height=80)
 button_reset = CTkButton(button_frame, text="RESET", command = image_reset, width=80, height=80)
-# button_add_text = CTkButton(button_frame, text="", image=icon_add_text, command = add_text, width=80, height=80)
 
 button_rotate_anticlockwise.grid(row=0,column=0,padx=2,pady=2)
 button_rotate_clockwise.grid(row=0,column=1,padx=2,pady=2)
@@ -376,7 +347,6 @@ button_flip_horizontal.grid(row=1,column=1,padx=2,pady=2)
 button_grayscale.grid(row=2,column=0, columnspan=2,padx=2,pady=2)
 button_crop.grid(row=3,column=0, columnspan=2,padx=2,pady=2)
 button_reset.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
-# button_add_text.grid(row=4,column=0, columnspan=2,padx=2,pady=2)
 
 button_frame.grid(row=0,column=0, sticky=N+S)
 
@@ -388,6 +358,7 @@ inputIMG_frame.grid(row=0,column=0)
 # ---Result Image Frame---
 result_frame = CTkFrame(root)
 
+# Buttons on the right side
 result_button_frame = CTkFrame(result_frame)
 sheet_sizes = ["SelectSize","A4", "A3"]
 selected_size = StringVar()
@@ -399,6 +370,7 @@ button_save = CTkButton(result_button_frame, text="Save As", command= lambda: sa
 button_save.grid(row=0,column=1)
 result_button_frame.grid(row=0,column=0)
 
+# Image on the right side
 outputIMG_frame = CTkFrame(result_frame)
 outputIMG_frame.grid(row=1,column=0)
 
@@ -406,106 +378,3 @@ result_frame.grid(row=0,column=1,sticky=N+S,padx=2,pady=2)
 
 root.state("zoomed")
 root.mainloop()
-
-
-# CODE REMOVED DUE TO TIME CONSTRAINTS
-'''
-def add_text():
-    # Adds text with white background to bottom of the image
-
-    window_add_text = CTkToplevel()
-    window_add_text.title("Add Text")
-    global img, img_preview, text_image
-    img_preview_width, img_preview_height = img_preview.size
-    text_image = img_preview.copy()
-
-    def bg_image(posX):
-        bg_height = int(posX)
-        bg_width = img_preview_width
-
-        # shown_image = img_preview.copy()
-        background_image = Image.new("RGB",(bg_width, bg_height), color="white")
-        text_image.paste(background_image,(img_preview_height-bg_height,0))
-        show_text_image = ImageTk.PhotoImage(text_image)
-        # Update label
-        label_text_image.configure(image=show_text_image)
-        
-    control_frame = CTkFrame(window_add_text)
-    
-    background_size = CTkSlider(control_frame, from_=0, to=img_preview_height, orientation=HORIZONTAL, 
-                                command= lambda X: bg_image(background_size.get()))
-    background_size.set(0)
-    background_size.grid(row=0,column=0,columnspan=5)
-
-    input_text = StringVar()
-    enter_text = CTkEntry(master=control_frame, placeholder_text="Sample Text")
-    input_text = enter_text.get()
-    enter_text.grid(row=1,column=0,columnspan=5)
-
-    text_sizes = ("8","9","10","11","12","14","18","24","30","36","48","60","72","96")
-    textSize=8
-    input_textSize = IntVar()
-    input_textSize.set(8)
-    cbox_text_size = CTkComboBox(master=control_frame, values=text_sizes, variable=input_textSize)
-    button_apply_text = CTkButton(control_frame, text="Apply",width=40)
-
-    cbox_text_size.grid(row=2,column=0)
-    button_apply_text.grid(row=2,column=1,padx=2)
-
-    button_bold = CTkButton(control_frame, text="B",width=28)
-    button_italic = CTkButton(control_frame, text="I",width=28)
-    button_underline = CTkButton(control_frame, text="U",width=28)
-
-    button_bold.grid(row=2, column=2, padx=2)
-    button_italic.grid(row=2, column=3, padx=2)
-    button_underline.grid(row=2, column=4, padx=2)    
-
-    control_frame.grid(row=0,column=1)
-
-    image_frame = CTkFrame(window_add_text)
-    show_text_image = ImageTk.PhotoImage(text_image)
-    label_text_image= CTkLabel(image_frame, image = show_text_image, text="")
-    label_text_image.grid(row=0,column=0)
-    image_frame.grid(row=0,column=0)
-'''
-#-------------------------------------------------------------------------------------------------------------
-'''
-def undo_change():
-    # Reverts back to previous change
-
-    pass
-
-def redo_change():
-    # Reverts back to next change
-
-    pass
-
-def change_history(change_index):
-    # Reverts to a specific point in history
-    global history_list, counter_history, img, img_preview
-
-    img = globals()[history_list[counter_history][0]]
-    img_preview = globals()[history_list[counter_history][1]]
-    re_frame(img_preview, previewIMG_frame)
-
-def track_history(image_name,image_preview_name, change_made):
-    # Tracks image name and change happened to it 
-    global history_list, counter_history
-
-    # image_copy = image_name.copy()
-    # image_preview_copy = image_preview_name.copy()    
-    counter_history += 1
-
-    varImg_name = f"image{counter_history}"
-    varImgPreview_name = f"image_preview{counter_history}"
-
-    globals()[varImg_name] = img.copy()
-    globals()[varImgPreview_name] = img_preview.copy()
-
-    history_list.append([varImg_name,
-                        varImgPreview_name,
-                        change_made])
-
-    history_menu.add_command(label=history_list[counter_history][2],
-                        command=lambda: change_history(counter_history))
-'''
