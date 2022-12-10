@@ -1,1 +1,0 @@
-width=window_width

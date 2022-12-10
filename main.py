@@ -215,7 +215,7 @@ def save_as(img_output):
         ("All Files","*.*"))
     
     file_path = filedialog.asksaveasfilename(filetypes=image_extentions, defaultextension=image_extentions, 
-                                            initialfile="PrintImage.png", title="Save Image")
+                                            initialfile="PrintImage.png", title="Save Image", initialdir = "./OutputImage")
     
     img_output.save(file_path)
 
