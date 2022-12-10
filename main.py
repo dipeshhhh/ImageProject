@@ -52,27 +52,39 @@ def open_file():
 def rotate_image(direction):
     # Rotates both <img> and <img_preview> by 90 degrees in direction = clockwise/anticlockwise
     # Also updates the <img_preview> in GUI
-    global img, img_preview, previewIMG_frame
+    global img, img_preview, previewIMG_frame, isGrayscale, grayscale_backup, grayscale_preview_backup
 
     if(direction.upper() == "ANTICLOCKWISE"):
         img = img.rotate(90, expand=True)
         img_preview = img_preview.rotate(90, expand=True)
+        if(isGrayscale):
+            grayscale_backup = grayscale_backup.rotate(90, expand=True)
+            grayscale_preview_backup = grayscale_preview_backup.rotate(90, expand=True)
     elif(direction.upper() == "CLOCKWISE"):
         img = img.rotate(-90, expand=True)
         img_preview = img_preview.rotate(-90, expand=True)
+        if(isGrayscale):
+            grayscale_backup = grayscale_backup.rotate(-90, expand=True)
+            grayscale_preview_backup = grayscale_preview_backup.rotate(-90, expand=True)
 
     re_frame(img_preview, previewIMG_frame) 
 
 def flip_image(orientation):
     # Flips both <img> and <img_preview> in given orientation = vertical/horizontal
-    global img, img_preview
+    global img, img_preview, isGrayscale, grayscale_backup, grayscale_preview_backup
 
     if(orientation.upper() == "VERTICAL"):
         img = img.transpose(Image.TRANSPOSE.FLIP_TOP_BOTTOM)
         img_preview = img_preview.transpose(Image.TRANSPOSE.FLIP_TOP_BOTTOM)
+        if(isGrayscale):
+            grayscale_backup = grayscale_backup.transpose(Image.TRANSPOSE.FLIP_TOP_BOTTOM)
+            grayscale_preview_backup = grayscale_preview_backup.transpose(Image.TRANSPOSE.FLIP_TOP_BOTTOM)
     elif(orientation.upper() == "HORIZONTAL"):
         img = img.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
         img_preview = img_preview.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
+        if(isGrayscale):
+            grayscale_backup = grayscale_backup.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
+            grayscale_preview_backup = grayscale_preview_backup.transpose(Image.TRANSPOSE.FLIP_LEFT_RIGHT)
 
     re_frame(img_preview, previewIMG_frame)
 
@@ -130,7 +142,7 @@ def image_crop():
     def save():
         # Updates the original image with cropped one
 
-        global img_preview, img, Left, Right, Top, Bottom
+        global img_preview, img, Left, Right, Top, Bottom, isGrayscale, grayscale_backup, grayscale_preview_backup
 
         window_width = root.winfo_width()
         window_height = root.winfo_height()
@@ -138,6 +150,13 @@ def image_crop():
 
         img_preview = ImageOps.contain(cropped_image,(width_inputIMG,window_height))
         img = img.crop((Left,Top,img_width-Right,img_height-Bottom))
+        if(isGrayscale):
+            grayscale_backup = grayscale_backup.crop((Left,Top,img_width-Right,img_height-Bottom))
+            grayscale_preview_backup = grayscale_preview_backup.crop((Left/img_to_preview_ratio,
+                Top/img_to_preview_ratio,
+                img_preview_width-(Right/img_to_preview_ratio),
+                img_preview_height-(Bottom/img_to_preview_ratio)))
+            grayscale_preview_backup = ImageOps.contain(grayscale_preview_backup,(width_inputIMG,window_height))
         re_frame(img_preview, previewIMG_frame)
 
         # track_history(img, img_preview, "Cropped Image")
@@ -284,7 +303,7 @@ def output_image(sheet_size):
     img = img_bk
 
 def image_reset():
-    global img, img_preview, backup_img, backup_img_preview
+    global img, img_preview, backup_img, backup_img_preview, isGrayscale, grayscale_backup, grayscale_preview_backup
 
     confirm = messagebox.askyesno(title="WARNING", message="Are you sure you want to reset the image?")
 
@@ -292,6 +311,9 @@ def image_reset():
         img = backup_img
         img_preview = backup_img_preview
 
+        isGrayscale=False
+        grayscale_backup=""
+        grayscale_preview_backup=""
         re_frame(img_preview,previewIMG_frame)
     else:
         return    
