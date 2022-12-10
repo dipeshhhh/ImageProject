@@ -15,8 +15,8 @@ To install pillow
   
  Project:
   Takes in image and creates real life sized printable passport size photos.
-  -Images are automatically resized+cropped to fit passport size image dimensions
-  -If your image is in landscape orientation, it will automatically adjust in the final image
+  -Images are automatically resized+cropped to fit passport size image dimensions.
+  -If your image is in landscape orientation, it will automatically adjust in the final image.
   
   Tutorial:
   -Open Image.
